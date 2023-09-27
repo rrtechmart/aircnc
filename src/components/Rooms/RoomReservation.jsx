@@ -29,7 +29,7 @@ const RoomReservation = ({ roomData }) => {
   // Booking state
   const [bookingInfo, setBookingInfo] = useState({
     guest: { name: user?.displayName, email: user?.email, image: user?.photoURL },
-    host: roomData?.host?.emil,
+    host: roomData?.host.email,
     location: roomData?.location,
     price: totalPrice,
     to: value.endDate,

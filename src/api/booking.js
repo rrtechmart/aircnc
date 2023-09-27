@@ -31,6 +31,14 @@ export const getAllBookings = async (email) =>{
     return data;
 }
 
+// get  bookings of a user by host email
+export const getHostBookings = async (email) =>{
+    const response = await fetch(`http://localhost:5000/bookings/host?email=${email}`)
+    const data = await response.json();
+    return data;
+}
+
+// delete bookings
 export const deleteBooking = async (id)=>{
     const response = await fetch(`http://localhost:5000/bookings/${id}`,{
         method: 'DELETE',
