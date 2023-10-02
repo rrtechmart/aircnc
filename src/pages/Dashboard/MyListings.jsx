@@ -3,21 +3,49 @@ import { AuthContext } from "../../providers/AuthProvider"
 import { getRooms } from "../../api/rooms";
 import RoomDataRow from "../../components/Dashboard/RoomDataRow";
 import EmptyState from "../../components/Shared/EmptyState";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import {useQuery} from '@tanstack/react-query'
 
 const MyListings = () => {
-  const { user } = useContext(AuthContext);
-  const [rooms, setRooms] = useState([]);
-  const fetchRooms = () => {
-    getRooms(user?.email)
-      .then(data => {
-        console.log(data)
-        setRooms(data)
-      })
-  }
+  const { user, loading } = useContext(AuthContext);
+  const [axiosSecure] = useAxiosSecure();
+  // const [rooms, setRooms] = useState([]);
 
-  useEffect(() => {
-    fetchRooms()
-  }, [user])
+  // get request using axios
+
+
+  // const fetchRooms = () => {
+  // axiosSecure.get('/rooms/${user?.email}')
+  //   .then(data => {
+  //     console.log(data);
+  //     setRooms(data.data)
+  //   })
+
+  //   .catch(error => console.log(error))
+
+  //   getRooms(user?.email)
+  //     .then(data => {
+  //       console.log(data)
+  //       setRooms(data)
+  //     })
+  // }
+
+  // useEffect(() => {
+  //   fetchRooms()
+  // }, [user])
+
+  const { refetch, data: rooms = [] } = useQuery({
+    queryKey: ['rooms', user?.email],
+    enabled: !loading,
+    queryFn: async () => {
+      const res = await axiosSecure(
+        `${import.meta.env.VITE_API_URL}/rooms/${user?.email}`
+      )
+      console.log('res from axios', res.data)
+      return res.data
+    },
+  })
+
 
   return (
     <>
@@ -78,7 +106,8 @@ const MyListings = () => {
                       rooms.map(room => <RoomDataRow
                         key={room?._id}
                         room={room}
-                        fetchRooms={fetchRooms}
+                        // fetchRooms={fetchRooms}
+                        refetch={refetch}
                       ></RoomDataRow>)
                     }
                   </tbody>
@@ -87,9 +116,9 @@ const MyListings = () => {
             </div>
           </div>
         </div>) : (<EmptyState
-                    message={'You did not added any room'}
-                    address={'/dashboard/add-room'}
-                    label={'Back to addRoom'}
+          message={'You did not added any room'}
+          address={'/dashboard/add-room'}
+          label={'Back to addRoom'}
         />)}
     </>
   )
