@@ -4,14 +4,18 @@ import Button from '../Button/Button'
 import { AuthContext } from '../../providers/AuthProvider'
 import BookingModal from '../Modal/BookingModal';
 import { formatDistance, subDays } from 'date-fns'
-import { addBooking, updateStatus } from '../../api/booking';
-import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+// import { addBooking, updateStatus } from '../../api/booking';
+// import { toast } from 'react-hot-toast';
+// import { useNavigate } from 'react-router-dom';
 
 const RoomReservation = ({ roomData }) => {
-  const { user, role } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  // const navigate = useNavigate();
 
   // date and const calculation
   const totalPrice = parseFloat(
@@ -42,32 +46,31 @@ const RoomReservation = ({ roomData }) => {
 
   const handleSelect = (ranges) => {
     setValue(...value)
-  }
+  };
+  
 
-  const modalHandler = () => {
-    addBooking(bookingInfo)                    //here added bookingInfo to db
-      .then(data => {
-        console.log(data)
-        updateStatus(roomData._id, true)         //here updated booking status
-          .then(data => {
-            console.log(data);
 
-          })
-        toast.success('booking is successfully added');
-        navigate('/dashboard/my-bookings')
-        closeModal();
+  // const modalHandler = () => {
+  //   addBooking(bookingInfo)                    //here added bookingInfo to db
+  //     .then(data => {
+  //       console.log(data)
+  //       updateStatus(roomData._id, true)         //here updated booking status
+  //         .then(data => {
+  //           console.log(data);
 
-      })
-      .catch(err => {
-        console.log(err)
-        closeModal()
-      })
-    console.log(bookingInfo);
-  }
-  const closeModal = () => {
-    setIsOpen(false);
-  }
+  //         })
+  //       toast.success('booking is successfully added');
+  //       navigate('/dashboard/my-bookings')
+  //       closeModal();
 
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //       closeModal()
+  //     })
+  //   console.log(bookingInfo);
+  // }
+  
   return (
     <div className='bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden'>
       <div className='flex flex-row items-center gap-1 p-4'>
@@ -91,7 +94,6 @@ const RoomReservation = ({ roomData }) => {
         <div>$ {totalPrice} </div>
       </div>
       <BookingModal
-        modalHandler={modalHandler}
         bookingInfo={bookingInfo}
         isOpen={isOpen}
         closeModal={closeModal}
